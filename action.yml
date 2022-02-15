@@ -1,0 +1,31 @@
+name: 'Connect to Twingate'
+description: 'Connects to Twingate protected resources from your Github Action workflow'
+branding:
+  icon: 'arrow-right-circle'
+  color: 'black'
+inputs:
+  service-key:
+    description: 'Twingate Service Key'
+    required: true
+  version:
+    description: 'Twingate Client Version'
+    default: 1.0.15.9013
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Install Twingate
+      shell: powershell
+      run: |
+        #Requires -RunAsAdministrator
+        Set-Content -Value '${{ inputs.service-key }}' -Path C:\Temp\service_key.json
+        Start-BitsTransfer -Source https://binaries.twingate.com/client/windows/versions/${{ inputs.version }}/TwingateWindowsInstaller.msi -Destination C:\Temp\TwingateWindowsInstaller.msi
+        Start-Process powershell -Verb RunAs -Wait -ArgumentList 'C:\Temp\TwingateWindowsInstaller.msi service_secret=C:\Temp\service_key.json /qn'
+
+    - name: Start Twingate
+      shell: powershell
+      run: |
+        $svc = Start-Service -Name Twingate.Service
+        if ($svc.Status -ne 'Running') {
+          throw 'Exiting with error as Twingate is not connected'
+        }
