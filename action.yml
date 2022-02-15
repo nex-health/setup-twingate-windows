@@ -25,7 +25,8 @@ runs:
     - name: Start Twingate
       shell: powershell
       run: |
-        $svc = Start-Service -Name Twingate.Service
+        Start-Service -Name Twingate.Service
+        $svc = Get-Service -Name Twingate.Service
         if ($svc.Status -ne 'Running') {
           throw 'Exiting with error as Twingate is not connected'
         }
