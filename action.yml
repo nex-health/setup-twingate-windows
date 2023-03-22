@@ -9,7 +9,7 @@ inputs:
     required: true
   version:
     description: 'Twingate Client Version'
-    default: 1.0.15.9013
+    default: 1.0.27.19340
     required: false
 runs:
   using: "composite"
